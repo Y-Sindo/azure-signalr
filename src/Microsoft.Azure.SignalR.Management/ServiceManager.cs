@@ -52,6 +52,11 @@ namespace Microsoft.Azure.SignalR.Management
             {
                 await connectionContainer.ConnectionInitializedTask.OrTimeout(cancellationToken);
             }
+            var healthChecker = serviceProviderForHub.GetService<MoqHealthChecker>();
+            if (healthChecker != null)
+            {
+                await healthChecker.FirstCheck();
+            }
             return serviceProviderForHub.GetRequiredService<ServiceHubContext>();
         }
 

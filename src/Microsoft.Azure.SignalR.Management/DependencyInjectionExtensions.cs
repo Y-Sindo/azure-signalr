@@ -45,7 +45,9 @@ namespace Microsoft.Azure.SignalR.Management
                 case ServiceTransportType.Persistent: 
                     services.AddSingleton<IServiceConnectionContainer>(sp => sp.GetRequiredService<MultiEndpointConnectionContainerFactory>().Connect(hubName));
                     break;
-                case ServiceTransportType.Transient: break;
+                case ServiceTransportType.Transient:
+                    services.AddSingleton(sp => ActivatorUtilities.CreateInstance<MoqHealthChecker>(sp, hubName));
+                    break;
             }
             return services
                 .AddSingleton<ServiceHubLifetimeManagerFactory>()
