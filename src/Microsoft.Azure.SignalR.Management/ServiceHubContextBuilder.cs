@@ -112,11 +112,8 @@ namespace Microsoft.Azure.SignalR.Management
                 .GetRequiredService<ServiceHubContextImpl>();
 
             //initialize
-            var connectionContainer = serviceHubContext.ServiceProvider.GetService<IServiceConnectionContainer>();
-            if (connectionContainer != null)
-            {
-                await connectionContainer.ConnectionInitializedTask.OrTimeout(cancellationToken);
-            }
+            var initializationTask = serviceHubContext.ServiceProvider.GetRequiredService<IInitializationTask>();
+            await initializationTask.StartAsync(cancellationToken);
 
             if (cancellationToken.IsCancellationRequested)
             {

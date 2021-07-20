@@ -42,13 +42,17 @@ namespace Microsoft.Azure.SignalR.Management
         {
             switch (transportType)
             {
-                case ServiceTransportType.Persistent: 
-                    services.AddSingleton<IServiceConnectionContainer>(sp => sp.GetRequiredService<MultiEndpointConnectionContainerFactory>().Connect(hubName));
+                case ServiceTransportType.Persistent:
+                    services.AddSingleton<IServiceConnectionContainer>(sp => sp.GetRequiredService<MultiEndpointConnectionContainerFactory>().Create(hubName))
+                        .AddSingleton<PersistentInitializationTask>();
                     break;
-                case ServiceTransportType.Transient: break;
+                case ServiceTransportType.Transient:
+                    services.AddSingleton<TransientInitializationTask>();
+                    break;
             }
             return services
                 .AddSingleton<ServiceHubLifetimeManagerFactory>()
+                .AddSingleton(sp => ActivatorUtilities.CreateInstance<InitializationTaskFactory>(sp).Create())
                 .AddSingleton(sp => sp.GetRequiredService<ServiceHubLifetimeManagerFactory>().Create(hubName))
                 .AddSingleton(sp => (HubLifetimeManager<Hub>)sp.GetRequiredService<IServiceHubLifetimeManager>())
                 .AddSingleton(sp => ActivatorUtilities.CreateInstance<ServiceHubContextImpl>(sp, hubName))
