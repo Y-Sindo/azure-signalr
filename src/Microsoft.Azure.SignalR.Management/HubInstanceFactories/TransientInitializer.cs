@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.SignalR.Management
 {
-    internal interface IInitializationTask
+    internal class TransientInitializer : IInitializer
     {
-        Task StartAsync(CancellationToken token);
+        public Task StartAsync(CancellationToken token)
+        {
+            // Will have health checker through rest api later.
+            return Task.CompletedTask;
+        }
     }
 }

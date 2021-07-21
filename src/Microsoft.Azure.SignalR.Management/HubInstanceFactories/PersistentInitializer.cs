@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Azure.SignalR.Management
 {
-    internal class PersistentInitializationTask : IInitializationTask
+    internal class PersistentInitializer : IInitializer
     {
         private readonly IServiceConnectionContainer _connectionContainer;
 
-        public PersistentInitializationTask(IServiceConnectionContainer connectionContainer)
+        public PersistentInitializer(IServiceConnectionContainer connectionContainer)
         {
             _connectionContainer = connectionContainer;
         }

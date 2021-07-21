@@ -18,12 +18,12 @@ namespace Microsoft.Azure.SignalR.Management
             _options = options.Value;
         }
 
-        public IInitializationTask Create()
+        public IInitializer Create()
         {
             return _options.ServiceTransportType switch
             {
-                ServiceTransportType.Persistent => _serviceProvider.GetRequiredService<PersistentInitializationTask>(),
-                ServiceTransportType.Transient => _serviceProvider.GetRequiredService<TransientInitializationTask>(),
+                ServiceTransportType.Persistent => _serviceProvider.GetRequiredService<PersistentInitializer>(),
+                ServiceTransportType.Transient => _serviceProvider.GetRequiredService<TransientInitializer>(),
                 _ => throw new NotSupportedException(),
             };
         }

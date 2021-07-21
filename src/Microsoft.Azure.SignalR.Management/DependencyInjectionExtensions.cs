@@ -44,10 +44,10 @@ namespace Microsoft.Azure.SignalR.Management
             {
                 case ServiceTransportType.Persistent:
                     services.AddSingleton<IServiceConnectionContainer>(sp => sp.GetRequiredService<MultiEndpointConnectionContainerFactory>().Create(hubName))
-                        .AddSingleton<PersistentInitializationTask>();
+                        .AddSingleton<PersistentInitializer>();
                     break;
                 case ServiceTransportType.Transient:
-                    services.AddSingleton<TransientInitializationTask>();
+                    services.AddSingleton<TransientInitializer>();
                     break;
             }
             return services
