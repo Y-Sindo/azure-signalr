@@ -52,7 +52,7 @@ namespace Microsoft.Azure.SignalR.Management
             }
             return services
                 .AddSingleton<ServiceHubLifetimeManagerFactory>()
-                .AddSingleton(sp => ActivatorUtilities.CreateInstance<InitializationTaskFactory>(sp).Create())
+                .AddSingleton(sp => ActivatorUtilities.CreateInstance<InitializerFactory>(sp).Create())
                 .AddSingleton(sp => sp.GetRequiredService<ServiceHubLifetimeManagerFactory>().Create(hubName))
                 .AddSingleton(sp => (HubLifetimeManager<Hub>)sp.GetRequiredService<IServiceHubLifetimeManager>())
                 .AddSingleton(sp => ActivatorUtilities.CreateInstance<ServiceHubContextImpl>(sp, hubName))

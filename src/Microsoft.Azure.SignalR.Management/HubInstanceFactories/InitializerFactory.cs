@@ -7,12 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.SignalR.Management
 {
-    internal class InitializationTaskFactory
+    internal class InitializerFactory
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ServiceManagerOptions _options;
 
-        public InitializationTaskFactory(IServiceProvider serviceProvider, IOptions<ServiceManagerOptions> options)
+        public InitializerFactory(IServiceProvider serviceProvider, IOptions<ServiceManagerOptions> options)
         {
             _serviceProvider = serviceProvider;
             _options = options.Value;
