@@ -4,14 +4,15 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Azure.SignalR.Management
 {
-    internal class PersistentInitializer : IInitializer
+    internal class ConnectionService : IHostedService
     {
         private readonly IServiceConnectionContainer _connectionContainer;
 
-        public PersistentInitializer(IServiceConnectionContainer connectionContainer)
+        public ConnectionService(IServiceConnectionContainer connectionContainer)
         {
             _connectionContainer = connectionContainer;
         }
@@ -20,6 +21,11 @@ namespace Microsoft.Azure.SignalR.Management
         {
             _ = _connectionContainer.StartAsync();
             await _connectionContainer.ConnectionInitializedTask.OrTimeout(token, TimeSpan.FromMinutes(1), "establishing service connections");
+        }
+
+        public Task StopAsync(CancellationToken _)
+        {
+            return _connectionContainer.StopAsync();
         }
     }
 }

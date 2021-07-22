@@ -3,27 +3,34 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.SignalR.Management
 {
-    internal class InitializerFactory
+    internal class HostedServiceFactory
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ServiceManagerOptions _options;
+        private bool _used = false;
 
-        public InitializerFactory(IServiceProvider serviceProvider, IOptions<ServiceManagerOptions> options)
+        public HostedServiceFactory(IServiceProvider serviceProvider, IOptions<ServiceManagerOptions> options)
         {
             _serviceProvider = serviceProvider;
             _options = options.Value;
         }
 
-        public IInitializer Create()
+        public IHostedService Create()
         {
+            if (_used)
+            {
+                throw new InvalidOperationException("Don't create multiple IHostedService from this factory.");
+            }
+            _used = true;
             return _options.ServiceTransportType switch
             {
-                ServiceTransportType.Persistent => _serviceProvider.GetRequiredService<PersistentInitializer>(),
-                ServiceTransportType.Transient => _serviceProvider.GetRequiredService<TransientInitializer>(),
+                ServiceTransportType.Persistent => _serviceProvider.GetRequiredService<ConnectionService>(),
+                ServiceTransportType.Transient => _serviceProvider.GetRequiredService<RestHealthCheckService>(),
                 _ => throw new NotSupportedException(),
             };
         }

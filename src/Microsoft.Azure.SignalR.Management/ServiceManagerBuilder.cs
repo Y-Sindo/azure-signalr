@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.SignalR.Management
 {
@@ -124,32 +124,28 @@ namespace Microsoft.Azure.SignalR.Management
         /// <returns>The instance of the <see cref="IServiceManager"/>.</returns>
         internal async Task<ServiceHubContext> CreateHubContextAsync(string hubName, CancellationToken cancellationToken)
         {
-            //add requried services
-            using var serviceProvider = _services.BuildServiceProvider();
-            var transportType = serviceProvider.GetRequiredService<IOptions<ServiceManagerOptions>>().Value.ServiceTransportType;
-            var services = new ServiceCollection().Add(_services);
-            services.AddHub(hubName, transportType);
-            _configureAction?.Invoke(services);
-            services.AddSingleton(services.ToList() as IReadOnlyCollection<ServiceDescriptor>);
-            ServiceHubContextImpl serviceHubContext = null;
+            var builder = new HostBuilder();
+            builder.ConfigureServices(services =>
+            {
+                services.Add(_services);
+                services.AddHub(hubName);
+                _configureAction?.Invoke(services);
+                services.AddSingleton(services.ToList() as IReadOnlyCollection<ServiceDescriptor>);
+            });
+
+            IHost host = null;
             try
             {
-                //build
-                serviceHubContext = services.BuildServiceProvider()
-                    .GetRequiredService<ServiceHubContextImpl>();
-                //initialize
-                var connectionContainer = serviceHubContext.ServiceProvider.GetService<IServiceConnectionContainer>();
-                if (connectionContainer != null)
-                {
-                    await connectionContainer.ConnectionInitializedTask.OrTimeout(cancellationToken);
-                }
-                return serviceHubContext.ServiceProvider.GetRequiredService<ServiceHubContextImpl>();
+                host = builder.Build();
+                await host.StartAsync(cancellationToken);
+                return host.Services.GetRequiredService<ServiceHubContextImpl>();
             }
             catch
             {
-                if (serviceHubContext is not null)
+                if (host != null)
                 {
-                    await serviceHubContext.DisposeAsync();
+                    await host.StopAsync();
+                    host.Dispose();
                 }
                 throw;
             }

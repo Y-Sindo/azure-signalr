@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Azure.SignalR.Management
 {
@@ -21,6 +21,7 @@ namespace Microsoft.Azure.SignalR.Management
         internal ServiceHubContextBuilder(IServiceCollection services)
         {
             _services = services;
+            _services.AddSingleton(this);
         }
 
         public ServiceHubContextBuilder() : this(new ServiceCollection())
@@ -97,30 +98,33 @@ namespace Microsoft.Azure.SignalR.Management
         /// Builds <see cref="ServiceHubContext"/> instances.
         /// </summary>
         /// <returns>The instance of the <see cref="IServiceManager"/>.</returns>
-        public async Task<ServiceHubContext> CreateAsync(string hubName, CancellationToken cancellationToken)
+        internal async Task<ServiceHubContext> CreateAsync(string hubName, CancellationToken cancellationToken)
         {
-            //add requried services
-            using var serviceProvider = _services.BuildServiceProvider();
-            var transportType = serviceProvider.GetRequiredService<IOptions<ServiceManagerOptions>>().Value.ServiceTransportType;
-            var services = new ServiceCollection().Add(_services);
-            services.AddHub(hubName, transportType);
-            _configureAction?.Invoke(services);
-            services.AddSingleton(services.ToList() as IReadOnlyCollection<ServiceDescriptor>);
-
-            //build
-            var serviceHubContext = services.BuildServiceProvider()
-                .GetRequiredService<ServiceHubContextImpl>();
-
-            //initialize
-            var initializer = serviceHubContext.ServiceProvider.GetRequiredService<IInitializer>();
-            await initializer.StartAsync(cancellationToken);
-
-            if (cancellationToken.IsCancellationRequested)
+            var builder = new HostBuilder();
+            builder.ConfigureServices(services =>
             {
-                await serviceHubContext?.DisposeAsync();
-                return null;
+                services.Add(_services);
+                services.AddHub(hubName);
+                _configureAction?.Invoke(services);
+                services.AddSingleton(services.ToList() as IReadOnlyCollection<ServiceDescriptor>);
+            });
+
+            IHost host = null;
+            try
+            {
+                host = builder.Build();
+                await host.StartAsync(cancellationToken);
+                return host.Services.GetRequiredService<ServiceHubContextImpl>();
             }
-            return serviceHubContext.ServiceProvider.GetRequiredService<ServiceHubContextImpl>();
+            catch
+            {
+                if (host != null)
+                {
+                    await host.StopAsync();
+                    host.Dispose();
+                }
+                throw;
+            }
         }
     }
 }

@@ -34,12 +34,12 @@ namespace Microsoft.Azure.SignalR.Management
 
         public async Task<IServiceHubContext> CreateHubContextAsync(string hubName, ILoggerFactory loggerFactory = null, CancellationToken cancellationToken = default)
         {
-            var builder = new ServiceHubContextBuilder(new ServiceCollection().Add(_services));
+            var builder = new ServiceManagerBuilder(new ServiceCollection().Add(_services));
             if (loggerFactory != null)
             {
                 builder.WithLoggerFactory(loggerFactory);
             }
-            var serviceHubContext = await builder.CreateAsync(hubName, cancellationToken);
+            var serviceHubContext = await builder.CreateHubContextAsync(hubName, cancellationToken);
             return serviceHubContext;
         }
 
