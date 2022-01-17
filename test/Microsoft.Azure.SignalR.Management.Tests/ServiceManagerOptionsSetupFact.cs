@@ -16,7 +16,7 @@ namespace Microsoft.Azure.SignalR.Management.Tests
             var connectionStrings = FakeEndpointUtils.GetFakeConnectionString(2);
             var names = new string[] { "First", "Second" };
             var configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
-            foreach (var (name, connectionString) in names.Zip(connectionStrings))
+            foreach (var (name, connectionString) in names.Zip<string, string, (string, string)>(connectionStrings, (name, conn) => (name, conn)))
             {
                 configuration[$"{Constants.Keys.AzureSignalREndpointsKey}:{name}"] = connectionString;
             }
@@ -26,7 +26,7 @@ namespace Microsoft.Azure.SignalR.Management.Tests
             optionsSetup.Configure(options);
 
             var actualEndpoints = options.ServiceEndpoints;
-            foreach (var (name, connectionString) in names.Zip(connectionStrings))
+            foreach (var (name, connectionString) in names.Zip<string, string, (string, string)>(connectionStrings, (name, conn) => (name, conn)))
             {
                 Assert.Contains(new ServiceEndpoint(name, connectionString), actualEndpoints);
             }
@@ -39,9 +39,9 @@ namespace Microsoft.Azure.SignalR.Management.Tests
             var connectionStrings = FakeEndpointUtils.GetFakeConnectionString(2);
             var names = new string[] { "First", "Second" };
             var configuration = new ConfigurationBuilder().AddInMemoryCollection().Build();
-            foreach (var (name, connStr) in names.Zip(connectionStrings))
+            foreach (var (name, conn) in names.Zip<string, string, (string, string)>(connectionStrings, (name, conn) => (name, conn)))
             {
-                configuration[$"{Constants.Keys.AzureSignalREndpointsKey}:{name}"] = connStr;
+                configuration[$"{Constants.Keys.AzureSignalREndpointsKey}:{name}"] = conn;
             }
             var connectionString = FakeEndpointUtils.GetFakeConnectionString(1).Single();
             configuration[Constants.Keys.ConnectionStringDefaultKey] = connectionString;
@@ -51,9 +51,9 @@ namespace Microsoft.Azure.SignalR.Management.Tests
             optionsSetup.Configure(options);
 
             var actualEndpoints = options.ServiceEndpoints;
-            foreach (var (name, connStr) in names.Zip(connectionStrings))
+            foreach (var (name, conn) in names.Zip<string, string, (string, string)>(connectionStrings, (name, conn) => (name, conn)))
             {
-                Assert.Contains(new ServiceEndpoint(name, connStr), actualEndpoints);
+                Assert.Contains(new ServiceEndpoint(name, conn), actualEndpoints);
             }
             Assert.Equal(connectionString, options.ConnectionString);
         }

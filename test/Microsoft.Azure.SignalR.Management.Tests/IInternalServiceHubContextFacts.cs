@@ -52,7 +52,7 @@ namespace Microsoft.Azure.SignalR.Management.Tests
             var container = serviceProvider.GetRequiredService<IServiceConnectionContainer>() as MultiEndpointMessageWriter;
             var innerEndpoints = container.TargetEndpoints.ToArray();
             var hubEndpoints = (hubContext as ServiceHubContextImpl).ServiceProvider.GetRequiredService<IServiceEndpointManager>().GetEndpoints(Hub);
-            Assert.True(innerEndpoints.SequenceEqual(hubEndpoints.Take(selectedCount), ReferenceEqualityComparer.Instance));
+            Assert.True(innerEndpoints.SequenceEqual(hubEndpoints.Take(selectedCount), new ReferenceEqualityComparer()));
         }
 
         [InlineData(ServiceTransportType.Persistent)]
@@ -198,13 +198,20 @@ namespace Microsoft.Azure.SignalR.Management.Tests
                     .WithLoggerFactory(loggerFactory)
                     .ConfigureServices(services => services.AddSingleton<IServiceConnectionFactory>(connectionFactory))
                     .BuildServiceManager();
-                var hubContext = await serviceManager.CreateHubContextAsync(Hub,default);
+                var hubContext = await serviceManager.CreateHubContextAsync(Hub, default);
 
                 await testAction.Invoke(hubContext);
 
                 var createdConnections = connectionFactory.CreatedConnections.ToDictionary(p => p.Key, p => p.Value.Select(conn => conn as TestServiceConnection).ToList());
                 assertAction.Invoke(createdConnections);
             }
+        }
+
+        private class ReferenceEqualityComparer : IEqualityComparer<ServiceEndpoint>
+        {
+            public bool Equals(ServiceEndpoint x, ServiceEndpoint y) => x == y;
+
+            public int GetHashCode(ServiceEndpoint obj) => obj.GetHashCode();
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-
+    <TargetFrameworks>net5.0;net461;netcoreapp3.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   
@@ -11,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Azure.Core.NewtonsoftJson" Version="$(MicrosoftAzureCoreNewtonsoftJsonPackageVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)" />
     <PackageReference Include="xunit" Version="$(XunitPackageVersion)" />

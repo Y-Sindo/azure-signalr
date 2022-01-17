@@ -64,7 +64,7 @@ namespace Microsoft.Azure.SignalR.Management.Tests
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadGateway))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadGateway))
                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.BadGateway));
-            
+
             var checkInterval = TimeSpan.FromSeconds(3);
             var retryInterval = TimeSpan.FromSeconds(0.5);
             using var _ = StartLog(out var loggerFactory);
@@ -84,13 +84,13 @@ namespace Microsoft.Azure.SignalR.Management.Tests
                 .CreateHubContextAsync(HubName, default);
 
             var endpoint = (serviceHubContext as ServiceHubContextImpl).ServiceProvider.GetRequiredService<IServiceEndpointManager>().GetEndpoints(HubName).First();
-            
+
             //The first health check is OK
             Assert.True(endpoint.Online);
 
-            var retryTime = RestHealthCheckService.MaxRetries * retryInterval;
             //Wait until the next health check finish
-            await Task.Delay(checkInterval + retryTime + TimeSpan.FromSeconds(1));
+            var waitSeconds = checkInterval.Seconds + (retryInterval.Seconds * RestHealthCheckService.MaxRetries) + 5;
+            await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
             Assert.False(endpoint.Online);
         }
     }

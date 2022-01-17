@@ -26,13 +26,24 @@ namespace Microsoft.Azure.SignalR.Management.Tests
                 yield return new object[] { new InvocationMessage("target", Array.Empty<object>()) };
                 yield return new object[] { new InvocationMessage("target", new object[] { null, null }) };
                 yield return new object[] { new InvocationMessage("target", new object[] { "string", true }) };
+#if NETCOREAPP
+                // .NET framework doesn't have such a constructor.
                 yield return new object[] { new InvocationMessage("invocationId", "target", new object[] { "string", true, new { name = "abc", value = 3 }, new object[] { 1, 2, 3 } }, new string[] { "streamId1" }) };
-
+                
+                // .NET framework doesn't allow invocationId to be null
                 yield return new object[] { new StreamInvocationMessage(null, "target", Array.Empty<object>()) };
                 yield return new object[] { new StreamInvocationMessage(null, "target", new object[] { null, null }) };
                 yield return new object[] { new StreamInvocationMessage(null, "target", new object[] { "string", true }) };
-                yield return new object[] { new StreamInvocationMessage("invocationId", "target", new object[] { "string", true }, new string[] { "streamId1" }) };
+#endif
 
+                yield return new object[] { new StreamInvocationMessage("invocationId", "target", Array.Empty<object>()) };
+                yield return new object[] { new StreamInvocationMessage("invocationId", "target", new object[] { null, null }) };
+                yield return new object[] { new StreamInvocationMessage("invocationId", "target", new object[] { "string", true }) };
+
+#if NETCOREAPP
+                // .NET framework doesn't have such a constructor.
+                yield return new object[] { new StreamInvocationMessage("invocationId", "target", new object[] { "string", true }, new string[] { "streamId1" }) };
+#endif
                 yield return new object[] { new StreamItemMessage(null, null) };
                 yield return new object[] { new StreamItemMessage(null, "string") };
                 yield return new object[] { new StreamItemMessage(null, Array.Empty<object>()) };
@@ -54,8 +65,8 @@ namespace Microsoft.Azure.SignalR.Management.Tests
             var testBytes = testProtocol.GetMessageBytes(message);
             var baseBytes = baseProtocol.GetMessageBytes(message);
 
-            testOutputHelper.WriteLine(Encoding.UTF8.GetString(testBytes.Span));
-            testOutputHelper.WriteLine(Encoding.UTF8.GetString(baseBytes.Span));
+            testOutputHelper.WriteLine(Encoding.UTF8.GetString(testBytes.Span.ToArray()));
+            testOutputHelper.WriteLine(Encoding.UTF8.GetString(baseBytes.Span.ToArray()));
 
             Assert.True(testBytes.Span.SequenceEqual(baseBytes.Span));
         }

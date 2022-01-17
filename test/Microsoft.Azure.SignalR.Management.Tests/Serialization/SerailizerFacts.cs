@@ -168,8 +168,8 @@ namespace Microsoft.Azure.SignalR.Management.Tests
                 {
                     var m = message as BroadcastDataMessage;
                     var actualPayload = m.Payloads["json"];
-                    _logger.LogDebug($"Expected: {Encoding.UTF8.GetString(expectedPayload.Span)}");
-                    _logger.LogDebug($"Actual: {Encoding.UTF8.GetString(actualPayload.Span)}");
+                    _logger.LogDebug($"Expected: {Encoding.UTF8.GetString(expectedPayload.Span.ToArray())}");
+                    _logger.LogDebug($"Actual: {Encoding.UTF8.GetString(actualPayload.Span.ToArray())}");
                     Assert.True(actualPayload.Span.SequenceEqual(expectedPayload.Span));
                 });
             return new ServiceManagerBuilder()
