@@ -1,16 +1,16 @@
 name: Gated-OSX
 on:
  push:
-   branches: 
+   branches:
     - master
     - dev
  pull_request:
-   branches: 
+   branches:
     - master
     - dev
 jobs:
   build_osx:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
     - uses: dorny/paths-filter@v2.2.0
@@ -30,7 +30,19 @@ jobs:
     - name: Update SubModules
       if: steps.filter.outputs.src == 'true'
       run: git submodule update --init --recursive
-    
-    - name: Build with dotnet
-      if: steps.filter.outputs.src == 'true'
-      run:  "./build.sh --ci /p:DisableNet461Tests=true"
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: |
+          3.1.x
+          5.0.x
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal /p:DisableNet461Tests=true

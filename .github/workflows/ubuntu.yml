@@ -1,11 +1,11 @@
 name: Gated-Ubuntu
-on: 
+on:
  push:
-   branches: 
+   branches:
     - master
     - dev
  pull_request:
-   branches: 
+   branches:
     - master
     - dev
 jobs:
@@ -29,6 +29,18 @@ jobs:
     - name: Update SubModules
       run: git submodule update --init --recursive
       if: steps.filter.outputs.src == 'true'
-    - name: Build with dotnet
-      run:  "./build.sh --ci /p:DisableNet461Tests=true"
-      if: steps.filter.outputs.src == 'true'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: |
+          3.1.x
+          5.0.x
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal /p:DisableNet461Tests=true
