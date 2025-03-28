@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
@@ -21,6 +21,10 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="$(MicrosoftAspNetCoreSignalRPackageVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Localization" Version="$(MicrosoftAspNetCoreLocalizationPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462'">
+    <PackageReference Include="Microsoft.AspNetCore.Http.Connections" Version="$(MicrosoftAspNetCoreHttpConnectionsPackageVersion)" />
   </ItemGroup>
 	
   <!-- New packages should be added to Directory.Build.props! -->

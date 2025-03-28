@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+#if !NETFRAMEWORK
 
 using System;
 
@@ -15,3 +16,4 @@ namespace Microsoft.Azure.SignalR
         void CleanupInvocationsByConnection(string connectionId);
     }
 }
+#endif

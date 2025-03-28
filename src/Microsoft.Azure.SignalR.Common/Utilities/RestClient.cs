@@ -1,5 +1,6 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+#if !NETFRAMEWORK
 
 using System;
 using System.Collections.Generic;
@@ -184,7 +185,6 @@ $"Response status code does not indicate success: {(int)response.StatusCode} ({r
 
     private HttpRequestMessage BuildRequest(RestApiEndpoint api, HttpMethod httpMethod, HubMessage? body, Type? typeHint)
     {
-        var payload = httpMethod == HttpMethod.Post ? body : null;
         return GenerateHttpRequest(api.Audience, api.Query, httpMethod, body, typeHint, api.Token);
     }
 
@@ -199,3 +199,4 @@ $"Response status code does not indicate success: {(int)response.StatusCode} ({r
     private static Func<HttpResponseMessage, Task<bool>>? AsAsync(Func<HttpResponseMessage, bool>? syncFunc) =>
         syncFunc == null ? null : (response => Task.FromResult(syncFunc(response)));
 }
+#endif

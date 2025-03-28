@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
@@ -26,6 +26,14 @@ namespace Microsoft.Azure.SignalR.AspNet
 
         public void Dispose()
         {
+        }
+
+        private class DummyDisposable : IDisposable
+        {
+            public static readonly DummyDisposable Instance = new();
+            public void Dispose()
+            {
+            }
         }
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace Microsoft.Azure.SignalR.AspNet
 
             public IDisposable BeginScope<TState>(TState state)
             {
-                return null;
+                return DummyDisposable.Instance;
             }
 
             private static TraceEventType GetEventType(LogLevel logLevel)

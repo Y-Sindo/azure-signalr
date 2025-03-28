@@ -16,7 +16,7 @@ namespace Microsoft.Azure.SignalR.AspNet.Tests;
 public class TraceManagerLoggerProviderTest
 {
     /// <summary>
-    /// TraceManagerLoggerProvider throws when its CreateLogger returns TraceSourceLogger when using HttpConnections.Client 1.0.0
+    /// Make sure TraceManagerLoggerProvider doesn't throw when its CreateLogger returns TraceSourceLogger when using HttpConnections.Client 1.0.0
     /// </summary>
     /// <returns></returns>
     [Fact]

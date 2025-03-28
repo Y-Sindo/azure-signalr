@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
+#if !NETFRAMEWORK
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -25,3 +25,4 @@ internal class BinaryPayloadContentBuilder : IPayloadContentBuilder
         return payload == null ? null : (HttpContent)new BinaryPayloadMessageContent(payload, _hubProtocols);
     }
 }
+#endif

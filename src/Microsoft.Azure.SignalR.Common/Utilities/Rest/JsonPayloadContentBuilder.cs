@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+#if !NETFRAMEWORK
 
 using System;
 using System.Net.Http;
@@ -25,3 +26,4 @@ internal class JsonPayloadContentBuilder : IPayloadContentBuilder
         return payload == null ? null : new JsonPayloadMessageContent(payload, _jsonObjectSerializer, typeHint);
     }
 }
+#endif

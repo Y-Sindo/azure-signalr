@@ -2,7 +2,7 @@
   <PropertyGroup Label="Test Package Versions">
     <!--For tests and samples: always try the latest version-->
     <SystemIdentityModelTokensJwtPackageVersion>8.0.1</SystemIdentityModelTokensJwtPackageVersion>
-    <MicrosoftAspNetCoreHttpConnectionsClientPackageVersion>8.0.8</MicrosoftAspNetCoreHttpConnectionsClientPackageVersion>
+    <MicrosoftAspNetCoreHttpConnectionsClientPackageVersion>1.2.0</MicrosoftAspNetCoreHttpConnectionsClientPackageVersion><!--We have to use this version instead of the latest version, otherwise we introduce transitive dependency Microsoft.Extensions.Features 8.0.8, and will get    Microsoft.Azure.SignalR.AspNet.Tests\TestConnectionContext.cs(19,21): error CS0433: The type 'IFeatureCollection' exists in both 'Microsoft.AspNetCore.Http.Features, Version=2.3.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60' and 'Microsoft.Extensions.Features, Version=8.0.8.0, Culture=neutral, PublicKeyToken=adb9793829ddae60'-->
     <MicrosoftAspNetCoreSignalRProtocolsMessagePackPackageVersion>8.0.8</MicrosoftAspNetCoreSignalRProtocolsMessagePackPackageVersion>
     <MicrosoftAspNetCoreSignalRProtocolsJsonPackageVersion>8.0.7</MicrosoftAspNetCoreSignalRProtocolsJsonPackageVersion>
     <MicrosoftExtensionsLoggingPackageVersion>8.0.0</MicrosoftExtensionsLoggingPackageVersion>
@@ -12,7 +12,7 @@
     <XunitRunnerVisualStudioPackageVersion>2.8.2</XunitRunnerVisualStudioPackageVersion>
     <MicrosoftOwinTestingPackageVersion>4.2.2</MicrosoftOwinTestingPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>8.0.8</MicrosoftAspNetCoreTestHostPackageVersion>
-    <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
+    <SystemThreadingTasksExtensionsVersion>4.6.0</SystemThreadingTasksExtensionsVersion>
     <MicrosoftExtensionsLoggingTestingPackageVersion>2.1.0</MicrosoftExtensionsLoggingTestingPackageVersion>
     <MicrosoftAspNetCoreTestingVersion>2.1.0</MicrosoftAspNetCoreTestingVersion>
     <MicrosoftAspNetSignalRClientVersion>2.4.3</MicrosoftAspNetSignalRClientVersion>
